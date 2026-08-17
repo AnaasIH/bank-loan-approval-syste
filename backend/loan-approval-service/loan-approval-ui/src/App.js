@@ -80,8 +80,8 @@ function App() {
       setSubmitMessage({
         type: isInstantApproval ? 'success' : 'warning',
         text: isInstantApproval 
-          ? `🎉 تم قبول الطلب فوراً! الرقم المرجعي: ${response.data.processInstanceId}`
-          : `⏳ الطلب قيد المراجعة اليدوية. الرقم المرجعي: ${response.data.processInstanceId}`
+          ? `🎉 Loan approved instantly! Reference ID: ${response.data.processInstanceId}`
+          : `⏳ Loan application under manual review. Reference ID: ${response.data.processInstanceId}`
       });
 
       setSearchName(customerName);
@@ -89,7 +89,7 @@ function App() {
     } catch (error) {
       setSubmitMessage({
         type: 'danger',
-        text: '❌ تعذر التواصل مع السيرفر. يرجى التأكد من تشغيل الـ Backend.'
+        text: '❌ Unable to connect to the server. Please ensure the Backend is running.'
       });
     } finally {
       setLoading(false);
@@ -116,7 +116,7 @@ function App() {
       await axios.post(`${API_BASE_URL}/tasks/${taskId}/complete?approved=${approved}`);
       fetchTasks();
     } catch (error) {
-      alert('حدث خطأ أثناء معالجة المهمة.');
+      alert('An error occurred while completing the task.');
     }
   };
 
@@ -136,7 +136,7 @@ function App() {
     doc.text(`Reference ID: ${loan.processInstanceId}`, 20, 40);
     doc.text(`Customer Name: ${loan.customerName || searchName}`, 20, 50);
     doc.text(`Approved Amount: ${loan.amount ? loan.amount.toLocaleString() : 'N/A'} DH`, 20, 60);
-    doc.text(`Date of Approval: ${new Date().toLocaleDateString()}`, 20, 70);
+    doc.text(`Date of Approval: ${new Date().toLocaleDateString('en-US')}`, 20, 70);
     doc.text(`Status: OFFICIALLY APPROVED`, 20, 80);
 
     doc.text("Thank you for choosing BankLoan Enterprise.", 20, 110);
@@ -166,26 +166,26 @@ function App() {
             className={`nav-btn ${activeTab === 'customer' ? 'active' : ''}`}
             onClick={() => setActiveTab('customer')}
           >
-            👤 تقديم طلب
+            👤 Apply for Loan
           </button>
           <button 
             className={`nav-btn ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
           >
-            📋 سجل طلباتي
+            📋 My History
           </button>
           <button 
             className={`nav-btn ${activeTab === 'officer' ? 'active' : ''}`}
             onClick={() => setActiveTab('officer')}
           >
-            🛡️ المراجعة اليدوية
+            🛡️ Officer Review
             {tasks.length > 0 && <span className="badge">{tasks.length}</span>}
           </button>
           <button 
             className={`nav-btn ${activeTab === 'admin' ? 'active' : ''}`}
             onClick={() => setActiveTab('admin')}
           >
-            📊 لوحة الإدارة (Admin)
+            📊 Admin Dashboard
           </button>
         </div>
       </nav>
@@ -195,27 +195,27 @@ function App() {
         {activeTab === 'customer' && (
           <div className="portal-container animate-fade">
             <div className="portal-header">
-              <h2>تقديم طلب قرض جديد</h2>
-              <p>قم بحساب القسط المناسب لك وتقديم الطلب في دقائق معدودة.</p>
+              <h2>Apply for a New Loan</h2>
+              <p>Calculate your estimated monthly payment and submit your application in minutes.</p>
             </div>
 
             <div className="grid-2">
               <div className="card">
-                <h3>معلومات الطلب</h3>
+                <h3>Application Form</h3>
                 <form onSubmit={handleApplyLoan}>
                   <div className="form-group">
-                    <label>الاسم الكامل:</label>
+                    <label>Full Name:</label>
                     <input
                       type="text"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="أدخل اسم العميل"
+                      placeholder="Enter full name"
                       required
                     />
                   </div>
 
                   <div className="form-group">
-                    <label>مبلغ القرض المطلوب: <strong>{amount.toLocaleString()} DH</strong></label>
+                    <label>Loan Amount: <strong>{amount.toLocaleString()} DH</strong></label>
                     <input
                       type="range"
                       min="5000"
@@ -227,18 +227,18 @@ function App() {
                   </div>
 
                   <div className="form-group">
-                    <label>مدة السداد: <strong>{months} شهراً</strong></label>
+                    <label>Duration: <strong>{months} Months</strong></label>
                     <select value={months} onChange={(e) => setMonths(Number(e.target.value))}>
-                      <option value={12}>12 شهراً</option>
-                      <option value={24}>24 شهراً</option>
-                      <option value={36}>36 شهراً</option>
-                      <option value={48}>48 شهراً</option>
-                      <option value={60}>60 شهراً</option>
+                      <option value={12}>12 Months</option>
+                      <option value={24}>24 Months</option>
+                      <option value={36}>36 Months</option>
+                      <option value={48}>48 Months</option>
+                      <option value={60}>60 Months</option>
                     </select>
                   </div>
 
                   <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
-                    {loading ? 'جاري معالجة الطلب...' : 'تأكيد وتقديم الطلب 🚀'}
+                    {loading ? 'Processing Application...' : 'Submit Application 🚀'}
                   </button>
                 </form>
 
@@ -250,18 +250,18 @@ function App() {
               </div>
 
               <div className="card summary-card">
-                <h3>ملخص القرض التقديري</h3>
+                <h3>Loan Summary Estimate</h3>
                 <div className="summary-item">
-                  <span>المبلغ الإجمالي:</span>
+                  <span>Total Amount:</span>
                   <strong>{amount.toLocaleString()} DH</strong>
                 </div>
                 <div className="summary-item">
-                  <span>مدة التمويل:</span>
-                  <strong>{months} شهراً</strong>
+                  <span>Loan Duration:</span>
+                  <strong>{months} Months</strong>
                 </div>
                 <div className="summary-item highlight">
-                  <span>القسط الشهري المتوقع:</span>
-                  <strong className="price">{estimatedMonthlyPayment.toLocaleString()} DH / شهر</strong>
+                  <span>Estimated Monthly Payment:</span>
+                  <strong className="price">{estimatedMonthlyPayment.toLocaleString()} DH / month</strong>
                 </div>
               </div>
             </div>
@@ -272,7 +272,7 @@ function App() {
         {activeTab === 'history' && (
           <div className="portal-container animate-fade">
             <div className="portal-header">
-              <h2>تتبع وسجل طلباتك السابقة</h2>
+              <h2>Track Your Previous Loan Applications</h2>
             </div>
 
             <div className="card search-card">
@@ -281,49 +281,49 @@ function App() {
                   type="text"
                   value={searchName}
                   onChange={(e) => setSearchName(e.target.value)}
-                  placeholder="أدخل اسمك لاسترجاع سجل قروضك..."
+                  placeholder="Enter your full name to fetch loan history..."
                   required
                 />
                 <button type="submit" className="btn btn-primary" disabled={searchingHistory}>
-                  {searchingHistory ? 'جاري البحث...' : '🔍 بحث'}
+                  {searchingHistory ? 'Searching...' : '🔍 Search'}
                 </button>
               </form>
             </div>
 
             <div className="card mt-4">
-              <h3>نتائج السجل التاريخي</h3>
+              <h3>Loan History Records</h3>
               {historyList.length === 0 ? (
-                <div className="empty-state"><p>لا توجد نتائج للعرض.</p></div>
+                <div className="empty-state"><p>No loan records found.</p></div>
               ) : (
                 <table className="custom-table">
                   <thead>
                     <tr>
-                      <th>رقم العملية المرجعي</th>
-                      <th>تاريخ التقديم</th>
-                      <th>المبلغ المطلوب</th>
-                      <th>حالة الطلب الإجراء</th>
+                      <th>Reference ID</th>
+                      <th>Submission Date</th>
+                      <th>Requested Amount</th>
+                      <th>Status / Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {historyList.map((item) => (
                       <tr key={item.processInstanceId}>
                         <td><code>{item.processInstanceId}</code></td>
-                        <td>{new Date(item.startTime).toLocaleString('ar-MA')}</td>
+                        <td>{new Date(item.startTime).toLocaleString('en-US')}</td>
                         <td><strong>{item.amount ? `${item.amount.toLocaleString()} DH` : 'N/A'}</strong></td>
                         <td>
                           {item.status === 'APPROVED' && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <span className="status-badge status-approved">✅ مقبول</span>
+                              <span className="status-badge status-approved">✅ Approved</span>
                               <button 
                                 onClick={() => downloadPDFNotice(item)} 
                                 className="btn btn-sm btn-outline"
                               >
-                                📄 وثيقة القبول (PDF)
+                                📄 Approval Document (PDF)
                               </button>
                             </div>
                           )}
-                          {item.status === 'PENDING' && <span className="status-badge status-pending">⏳ قيد المراجعة</span>}
-                          {item.status === 'REJECTED' && <span className="status-badge status-rejected">❌ مرفوض</span>}
+                          {item.status === 'PENDING' && <span className="status-badge status-pending">⏳ Pending Review</span>}
+                          {item.status === 'REJECTED' && <span className="status-badge status-rejected">❌ Rejected</span>}
                         </td>
                       </tr>
                     ))}
@@ -339,43 +339,43 @@ function App() {
           <div className="portal-container animate-fade">
             <div className="portal-header flex-between">
               <div>
-                <h2>لوحة مراجعة المهام المعلقة</h2>
+                <h2>Pending Officer Tasks Review</h2>
               </div>
-              <button onClick={fetchTasks} className="btn btn-outline">🔄 تحديث</button>
+              <button onClick={fetchTasks} className="btn btn-outline">🔄 Refresh</button>
             </div>
 
             <div className="card">
-              <h3>قائمة المهام المنتظرة</h3>
+              <h3>Pending Tasks Queue</h3>
               {tasks.length === 0 ? (
-                <div className="empty-state"><p>✨ لا توجد مهام معلقة حالياً.</p></div>
+                <div className="empty-state"><p>✨ No pending tasks at the moment.</p></div>
               ) : (
                 <table className="custom-table">
                   <thead>
                     <tr>
-                      <th>معرف المهمة</th>
-                      <th>اسم العميل</th>
-                      <th>المبلغ المطلوب</th>
-                      <th>الإجراء المطلوب</th>
+                      <th>Task ID</th>
+                      <th>Customer Name</th>
+                      <th>Requested Amount</th>
+                      <th>Required Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {tasks.map((task) => (
                       <tr key={task.taskId}>
                         <td><code>{task.taskId}</code></td>
-                        <td><strong>{task.customerName || 'غير محدد'}</strong></td>
+                        <td><strong>{task.customerName || 'N/A'}</strong></td>
                         <td><span className="amount-badge">{task.amount ? `${task.amount.toLocaleString()} DH` : 'N/A'}</span></td>
                         <td>
                           <button 
                             onClick={() => handleCompleteTask(task.taskId, true)}
                             className="btn btn-sm btn-success mr-2"
                           >
-                            موافقة ✅
+                            Approve ✅
                           </button>
                           <button 
                             onClick={() => handleCompleteTask(task.taskId, false)}
                             className="btn btn-sm btn-danger"
                           >
-                            رفض ❌
+                            Reject ❌
                           </button>
                         </td>
                       </tr>
@@ -392,43 +392,43 @@ function App() {
           <div className="portal-container animate-fade">
             <div className="portal-header flex-between">
               <div>
-                <h2>📊 لوحة الإدارة العامة (Admin Dashboard)</h2>
-                <p>مراقبة واستعراض كافة الطلبات للعملاء الحالية والسابقة ومعرفة القرارات المتخذة.</p>
+                <h2>📊 Admin Executive Dashboard</h2>
+                <p>Monitor, track, and analyze all loan applications across the enterprise.</p>
               </div>
-              <button onClick={fetchAllLoansForAdmin} className="btn btn-outline">🔄 تحديث البيانات</button>
+              <button onClick={fetchAllLoansForAdmin} className="btn btn-outline">🔄 Refresh Data</button>
             </div>
 
             {/* General Stats */}
             <div className="stats-grid">
               <div className="stat-card">
-                <h4>إجمالي الطلبات</h4>
+                <h4>Total Applications</h4>
                 <div className="stat-value">{allLoans.length}</div>
               </div>
               <div className="stat-card">
-                <h4>الطلبات المقبولة</h4>
+                <h4>Approved Loans</h4>
                 <div className="stat-value text-success">✅ {totalApproved}</div>
               </div>
               <div className="stat-card">
-                <h4>الطلبات المرفوضة</h4>
+                <h4>Rejected Loans</h4>
                 <div className="stat-value text-danger">❌ {totalRejected}</div>
               </div>
               <div className="stat-card">
-                <h4>قيد الانتظار</h4>
+                <h4>Pending Review</h4>
                 <div className="stat-value text-warning">⏳ {totalPending}</div>
               </div>
             </div>
 
             {/* Charts Section */}
             <div className="card mt-4 mb-4">
-              <h3>📊 التحليلات والرسوم البيانية للطلبات</h3>
+              <h3>📊 Loan Status Analytics Distribution</h3>
               <div style={{ width: '100%', height: 300 }}>
                 <ResponsiveContainer>
                   <PieChart>
                     <Pie
                       data={[
-                        { name: 'مقبول (Approved)', value: totalApproved, color: '#10b981' },
-                        { name: 'مرفوض (Rejected)', value: totalRejected, color: '#ef4444' },
-                        { name: 'قيد الانتظار (Pending)', value: totalPending, color: '#f59e0b' }
+                        { name: 'Approved', value: totalApproved, color: '#10b981' },
+                        { name: 'Rejected', value: totalRejected, color: '#ef4444' },
+                        { name: 'Pending', value: totalPending, color: '#f59e0b' }
                       ]}
                       cx="50%"
                       cy="50%"
@@ -451,40 +451,40 @@ function App() {
             {/* Admin Table with Filters */}
             <div className="card mt-4">
               <div className="card-header flex-between mb-3">
-                <h3>سجل الطلبات الكلي</h3>
+                <h3>All System Loan Applications</h3>
                 <div className="filter-buttons">
                   <button 
                     className={`btn btn-sm ${statusFilter === 'ALL' ? 'btn-primary' : 'btn-outline'}`}
                     onClick={() => setStatusFilter('ALL')}
-                  >الكل ({allLoans.length})</button>
+                  >All ({allLoans.length})</button>
                   <button 
                     className={`btn btn-sm ${statusFilter === 'APPROVED' ? 'btn-success' : 'btn-outline'}`}
                     onClick={() => setStatusFilter('APPROVED')}
-                  >المقبولة ({totalApproved})</button>
+                  >Approved ({totalApproved})</button>
                   <button 
                     className={`btn btn-sm ${statusFilter === 'REJECTED' ? 'btn-danger' : 'btn-outline'}`}
                     onClick={() => setStatusFilter('REJECTED')}
-                  >المرفوضة ({totalRejected})</button>
+                  >Rejected ({totalRejected})</button>
                   <button 
                     className={`btn btn-sm ${statusFilter === 'PENDING' ? 'btn-warning' : 'btn-outline'}`}
                     onClick={() => setStatusFilter('PENDING')}
-                  >قيد الانتظار ({totalPending})</button>
+                  >Pending ({totalPending})</button>
                 </div>
               </div>
 
               {loadingAdmin ? (
-                <p className="text-center">جاري تحميل كافة البيانات من القاعدة...</p>
+                <p className="text-center">Loading system data...</p>
               ) : filteredLoans.length === 0 ? (
-                <div className="empty-state"><p>لا توجد طلبات تطابق هذا الفلتر.</p></div>
+                <div className="empty-state"><p>No applications match the selected filter.</p></div>
               ) : (
                 <table className="custom-table">
                   <thead>
                     <tr>
-                      <th>معرف العملية</th>
-                      <th>اسم العميل</th>
-                      <th>المبلغ المطلوب</th>
-                      <th>تاريخ التقديم</th>
-                      <th>حالة القرار النهائي</th>
+                      <th>Reference ID</th>
+                      <th>Customer Name</th>
+                      <th>Requested Amount</th>
+                      <th>Submission Date</th>
+                      <th>Final Decision</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -493,11 +493,11 @@ function App() {
                         <td><code>{loan.processInstanceId}</code></td>
                         <td><strong>{loan.customerName}</strong></td>
                         <td><strong>{loan.amount ? `${loan.amount.toLocaleString()} DH` : 'N/A'}</strong></td>
-                        <td>{new Date(loan.startTime).toLocaleString('ar-MA')}</td>
+                        <td>{new Date(loan.startTime).toLocaleString('en-US')}</td>
                         <td>
-                          {loan.status === 'APPROVED' && <span className="status-badge status-approved">✅ مقبول (Approved)</span>}
-                          {loan.status === 'PENDING' && <span className="status-badge status-pending">⏳ قيد الانتظار (Pending)</span>}
-                          {loan.status === 'REJECTED' && <span className="status-badge status-rejected">❌ مرفوض (Rejected)</span>}
+                          {loan.status === 'APPROVED' && <span className="status-badge status-approved">✅ Approved</span>}
+                          {loan.status === 'PENDING' && <span className="status-badge status-pending">⏳ Pending</span>}
+                          {loan.status === 'REJECTED' && <span className="status-badge status-rejected">❌ Rejected</span>}
                         </td>
                       </tr>
                     ))}
