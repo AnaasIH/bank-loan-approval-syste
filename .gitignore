@@ -1,0 +1,15 @@
+# Node dependencies
+**/node_modules/
+**/build/
+
+# Maven build outputs
+**/target/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db

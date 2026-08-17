@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysqldb:
+    image: mysql:8.0
+    container_name: bankloan-mysql
+    environment:
+      MYSQL_DATABASE: bankloan_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  # Spring Boot Backend & Camunda Engine
+  backend:
+    build: ./loan-approval-backend
+    container_name: bankloan-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/bankloan_db?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      - mysqldb
+
+  # React Frontend
+  frontend:
+    build: ./loan-approval-ui
+    container_name: bankloan-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
